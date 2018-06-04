@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH -c 12
+#SBATCH -n 1
+#SBATCH --mem=85G
+#SBATCH -p short
+#SBATCH -t 5:00:00
+#SBATCH --mail-type=END
+#SBATCH --mail-user=wgillis@g.harvard.edu
+
+source activate caiman
+
+if [[ $# == 1 ]]; then
+	python /home/wg41/code/caiman-motion-correct.py "$1"
+else
+	python /home/wg41/code/caiman-motion-correct.py
+fi

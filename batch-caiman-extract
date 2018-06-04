@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH -c 11
+#SBATCH -n 1
+#SBATCH --mem=80G
+#SBATCH -p short
+#SBATCH -t 8:00:00
+#SBATCH --mail-type=END
+#SBATCH --mail-user=wgillis@g.harvard.edu
+
+source activate caiman
+
+if [[ $# == 1 ]]; then
+	python /home/wg41/code/caiman-extract.py "$1"
+else
+	python /home/wg41/code/caiman-extract.py
+fi
