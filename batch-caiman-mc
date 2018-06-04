@@ -10,7 +10,7 @@
 source activate caiman
 
 if [[ $# == 1 ]]; then
-	python /home/wg41/code/caiman-motion-correct.py "$1"
+	python $HOME/code/caiman-pipeline/caiman-motion-correct.py "$1"
 else
-	python /home/wg41/code/caiman-motion-correct.py
+	python $HOME/code/caiman-pipeline/caiman-motion-correct.py
 fi
