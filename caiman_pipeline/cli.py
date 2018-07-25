@@ -18,6 +18,8 @@ def cli():
 def concat_tiffs(input_dir, downsample):
     # get tif files
     files = glob(os.path.join(input_dir, '*.tif'))
+    # remove any files with 'concat' in the name - it means it's already concatenated
+    files = [f for f in files if 'concat' not in f]
     processed = []
     for f in files:
         # append a 0 to the name if it doesn't have numbers
@@ -37,4 +39,4 @@ def concat_tiffs(input_dir, downsample):
                 for img in in_file.pages:
                     resized = cv2.resize(img.asarray(), None, fx=1 / downsample,
                                          fy=1 / downsample, interpolation=cv2.INTER_AREA)
-                    out_file.save(data=resized)
+                    out_file.save(data=resized.reshape(1, *resized.shape))
