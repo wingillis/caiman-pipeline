@@ -41,3 +41,13 @@ def concat_tiffs(input_dir, downsample):
                     resized = cv2.resize(img.asarray(), None, fx=1 / downsample,
                                          fy=1 / downsample, interpolation=cv2.INTER_AREA)
                     out_file.save(data=resized.reshape(1, *resized.shape))
+
+
+@cli.command(name='extract')
+def extract():
+    pass
+
+
+@cli.command(name='mc')
+def motion_correct():
+    pass
