@@ -44,7 +44,7 @@ if len(motion_corrected) == 0:
     # splits_rig is for keeping the memory low
     mc = motion_correct_oneP_rigid([exp_file], dview=dview, max_shifts=[5, 5], gSig_filt=[gSig]*2, splits_rig=50, save_movie=True)
     # transforming memoruy mapped file in C order (efficient to perform computing)
-    fname_new = cm.save_memmap([mc.fname_tot_rig], base_name='memmap_', order = 'C') 
+    fname_new = cm.save_memmap([mc.fname_tot_rig], base_name='memmap_', order = 'C')
 elif len(memmapped_files) == 0:
     fname_new = cm.save_memmap([motion_corrected[0]], base_name='memmap_', order='C')
 else:
