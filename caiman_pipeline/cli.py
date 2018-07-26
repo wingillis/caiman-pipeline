@@ -73,7 +73,7 @@ def extract_pipeline(input_file, cnmf_options, out_file):
 
 @cli.command(name='mc')
 @click.argument('input_file')
-@click.option('--gsig', default=3, type=float)
+@click.option('--gsig', default=3, type=int)
 @click.option('--max-shifts', default=5, type=int)
 @click.option('--rigid-splits', default=50, type=int)
 @click.option('--save-movie', default=True, type=bool)
