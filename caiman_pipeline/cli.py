@@ -88,7 +88,7 @@ def motion_correct(input_file, gsig, max_shifts, rigid_splits, save_movie, nproc
                      save_movie=save_movie)
     dview = util.create_dview(n_procs=nprocs)
     corrected = mc.motion_correct(tif, mc_params, dview)
-    mmapped = util.memmap(corrected.fname_tot_rig)
+    mmapped = util.memmap_file(corrected.fname_tot_rig)
 
     Yr, dims, T = cm.load_memmap(mmapped)
     Y = Yr.T.reshape((T,) + dims, order='F')
