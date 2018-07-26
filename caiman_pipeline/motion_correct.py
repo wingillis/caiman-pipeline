@@ -15,6 +15,5 @@ def handle_mat_file(matfile):
 def motion_correct(tif, mc_params, dview=None):
     if not dview:
         dview = util.create_dview()
-    corrected = mc.motion_correct_oneP_rigid([tif], dview=dview, max_shifts=[5, 5],
-                                             **mc_params)
+    corrected = mc.motion_correct_oneP_rigid([tif], dview=dview, **mc_params)
     return corrected
