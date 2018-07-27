@@ -10,9 +10,8 @@
 source activate caiman
 if [ $# -lt 1 ]; then
 	caiman-pipe concat-tiffs
-	exit 0
 else
-	caiman-pipe concat-tiffs $1
+	caiman-pipe concat-tiffs -i $1
 fi
 
 
