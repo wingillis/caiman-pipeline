@@ -6,5 +6,5 @@ def create_dview(n_procs=9):
     return dview
 
 
-def memmap_file(filename, basename='memmap_'):
-    return cm.save_memmap([filename], base_name=basename, order='C')
+def memmap_file(filename, basename='memmap_', dview=None):
+    return cm.save_memmap([filename], base_name=basename, dview=dview, order='C')
