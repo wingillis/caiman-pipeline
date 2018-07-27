@@ -69,7 +69,7 @@ def extract_pipeline(input_file, cnmf_options, out_file):
     with open('cnmf.dill', 'wb') as f:
         dill.dump(cnmf, f)
     print('There are {} neurons, baby!'.format(ca_traces.shape[0]))
-    cm.cluster.stop_server(dview=dview)
+    cm.stop_server(dview=dview)
 
 
 @cli.command(name='mc')
@@ -96,4 +96,4 @@ def motion_correct(input_file, gsig, max_shifts, rigid_splits, save_movie, nproc
     cn_filt, pnr = cm.summary_images.correlation_pnr(Y[:2000], gSig=gsig, swap_dim=False)
     cm.utils.visualization.inspect_correlation_pnr(cn_filt, pnr)
     plt.savefig('caiman-corr.png')
-    cm.cluster.stop_server(dview=dview)
+    cm.stop_server(dview=dview)
