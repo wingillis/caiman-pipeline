@@ -1,0 +1,18 @@
+#!/bin/bash
+#SBATCH -c 2
+#SBATCH -n 1
+#SBATCH --mem=10G
+#SBATCH -p short
+#SBATCH -t 1:00:00
+#SBATCH --mail-type=END
+#SBATCH --mail-user=wgillis@g.harvard.edu
+
+source activate caiman
+if [ $# -lt 1 ]; then
+	caiman-pipe concat-tiffs
+	exit 0
+else
+	caiman-pipe concat-tiffs $1
+fi
+
+
