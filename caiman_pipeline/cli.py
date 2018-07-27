@@ -3,6 +3,13 @@ import re
 import tifffile
 import click
 import cv2
+import dill
+import h5py
+import ruamel.yaml as yaml
+import caiman_pipeline.motion_correct as mc
+import caiman_pipeline.util as util
+import caiman_pipeline.extract as extract
+import caiman as cm
 from glob import glob
 from tqdm import tqdm
 
@@ -42,3 +49,51 @@ def concat_tiffs(input_dir, downsample):
                     resized = cv2.resize(img.asarray(), None, fx=1 / downsample,
                                          fy=1 / downsample, interpolation=cv2.INTER_AREA)
                     out_file.save(data=resized.reshape(1, *resized.shape))
+
+
+@cli.command(name='extract')
+@click.argument('input_file', type=click.Path(exists=True, resolve_path=True))
+@click.argument('cnmf_options')
+@click.option('--out-file', '-o', default='caiman-output.h5')
+def extract_pipeline(input_file, cnmf_options, out_file):
+    assert input_file.endswith('mmap'), 'Input file needs to be a memmap file!'
+    dir = os.path.dirname(input_file)
+    with open(cnmf_options, 'r') as f:
+        cnmf_options = yaml.load(f, yaml.Loader)
+    dview = util.create_dview()
+    ca_traces, masks, cnmf = extract.extract(input_file, cnmf_options, dview=dview)
+    with h5py.File(os.path.join(dir, out_file), 'w') as f:
+        f.create_dataset('ca', data=ca_traces, compression='lzf')
+        f.create_dataset('masks', data=masks, compression='lzf')
+    del cnmf.dview
+    with open('cnmf.dill', 'wb') as f:
+        dill.dump(cnmf, f)
+    print('There are {} neurons, baby!'.format(ca_traces.shape[0]))
+    cm.cluster.stop_server(dview=dview)
+
+
+@cli.command(name='mc')
+@click.argument('input_file')
+@click.option('--gsig', default=3, type=int)
+@click.option('--max-shifts', default=5, type=int)
+@click.option('--rigid-splits', default=50, type=int)
+@click.option('--save-movie', default=True, type=bool)
+@click.option('--nprocs', default=8, type=int)
+def motion_correct(input_file, gsig, max_shifts, rigid_splits, save_movie, nprocs):
+    import matplotlib.pyplot as plt
+    if input_file.endswith('mat'):
+        tif = mc.handle_mat_file(input_file)
+    elif input_file.endswith('tif'):
+        tif = input_file
+    mc_params = dict(gSig_filt=[gsig]*2, max_shifts=[max_shifts]*2, splits_rig=rigid_splits,
+                     save_movie=save_movie)
+    dview = util.create_dview(n_procs=nprocs)
+    corrected = mc.motion_correct(tif, mc_params, dview)
+    mmapped = util.memmap_file(corrected.fname_tot_rig)
+
+    Yr, dims, T = cm.load_memmap(mmapped)
+    Y = Yr.T.reshape((T,) + dims, order='F')
+    cn_filt, pnr = cm.summary_images.correlation_pnr(Y[:2000], gSig=gsig, swap_dim=False)
+    cm.utils.visualization.inspect_correlation_pnr(cn_filt, pnr)
+    plt.savefig('caiman-corr.png')
+    cm.cluster.stop_server(dview=dview)
