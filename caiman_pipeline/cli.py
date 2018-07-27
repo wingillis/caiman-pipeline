@@ -23,6 +23,7 @@ def cli():
 @click.option('--input-dir', '-i', default=os.getcwd(), type=click.Path(resolve_path=True, exists=True))
 @click.option('--downsample', '-d', default=4, type=int)
 def concat_tiffs(input_dir, downsample):
+    # TODO: add a failsafe so multiple recordings in the same dir don't get concatenated
     regex_pat = r'-[0-9]{3}\.tif$'
     # get tif files
     files = glob(os.path.join(input_dir, '*.tif'))
