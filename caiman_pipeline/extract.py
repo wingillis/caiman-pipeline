@@ -5,7 +5,7 @@ import caiman.components_evaluation as evaluate
 
 def extract(mmap_file, cnmf_opts, nprocs=8, dview=None):
     yr, dims, t = cm.load_memmap(mmap_file)
-    y = yr.reshape((t, *dims), order='F')
+    y = yr.T.reshape((t, *dims), order='F')
     cnmf = source.cnmf.CNMF(
         n_processes=nprocs,
         method_init=cnmf_opts['init-method'],
@@ -31,7 +31,8 @@ def extract(mmap_file, cnmf_opts, nprocs=8, dview=None):
         normalize_init=False,
         center_psf=True,
         ring_size_factor=cnmf_opts['ring-size-factor'],
-        del_duplicates=True
+        del_duplicates=True,
+        ssub_B=2
     )
     cnmf.fit(y)
 

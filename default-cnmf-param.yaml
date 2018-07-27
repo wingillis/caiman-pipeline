@@ -7,7 +7,7 @@ t-sub: 3 # temporal downsample for initialization
 s-sub: 1 # spatial downsample for initialization
 half-patch-size: 40 # N pixels of half a patch
 patch-overlap: 20
-background-components: 16
+background-components: -1
 min-corr: 0.8
 min-pnr: 8
 ring-size-factor: 1.4
