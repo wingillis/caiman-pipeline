@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH -c 11
+#SBATCH -c 9
 #SBATCH -n 1
-#SBATCH --mem=80G
+#SBATCH --mem=90G
 #SBATCH -p short
 #SBATCH -t 8:00:00
 #SBATCH --mail-type=END
@@ -10,4 +10,4 @@
 # I made a caiman python environment activated in this way
 source activate caiman
 
-caiman-pipe extract "$1" "$2"
+caiman-pipe extract "$1" "$2" --n-procs 8

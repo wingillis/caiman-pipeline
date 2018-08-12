@@ -55,12 +55,13 @@ def concat_tiffs(input_dir, downsample):
 @click.argument('input_file', type=click.Path(exists=True, resolve_path=True))
 @click.argument('cnmf_options')
 @click.option('--out-file', '-o', default='caiman-output.h5')
-def extract_pipeline(input_file, cnmf_options, out_file):
+@click.option('--n-procs', default=9, type=int)
+def extract_pipeline(input_file, cnmf_options, out_file, n_procs):
     assert input_file.endswith('mmap'), 'Input file needs to be a memmap file!'
     dir = os.path.dirname(input_file)
     with open(cnmf_options, 'r') as f:
         cnmf_options = yaml.load(f, yaml.Loader)
-    dview = util.create_dview()
+    dview = util.create_dview(n_procs=n_procs)
     ca_traces, masks, cnmf = extract.extract(input_file, cnmf_options, dview=dview)
     with h5py.File(os.path.join(dir, out_file), 'w') as f:
         f.create_dataset('ca', data=ca_traces, compression='lzf')
@@ -93,7 +94,7 @@ def motion_correct(input_file, gsig, max_shifts, rigid_splits, save_movie, nproc
 
     Yr, dims, T = cm.load_memmap(mmapped)
     Y = Yr.T.reshape((T,) + dims, order='F')
-    cn_filt, pnr = cm.summary_images.correlation_pnr(Y[:2000], gSig=gsig, swap_dim=False)
+    cn_filt, pnr = cm.summary_images.correlation_pnr(Y[:3000, max_shifts:-max_shifts, max_shifts:-max_shifts], gSig=gsig, swap_dim=False)
     cm.utils.visualization.inspect_correlation_pnr(cn_filt, pnr)
     plt.savefig('caiman-corr.png')
     cm.stop_server(dview=dview)

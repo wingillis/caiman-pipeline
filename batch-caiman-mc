@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH -c 12
+#SBATCH -c 10
 #SBATCH -n 1
-#SBATCH --mem=85G
+#SBATCH --mem=90G
 #SBATCH -p short
 #SBATCH -t 5:00:00
 #SBATCH --mail-type=END
@@ -9,4 +9,4 @@
 
 source activate caiman
 
-caiman-pipe mc "$1"
+caiman-pipe mc "$1" --rigid-splits 70
