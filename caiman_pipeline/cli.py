@@ -19,6 +19,14 @@ def cli():
     pass
 
 
+@cli.command(name='mat-to-tiff')
+@click.argument('input-file', type=click.Path(resolve_path=True, exists=True))
+@click.option('--output', '-o', default=None, type=click.Path(resolve_path=True))
+def mat_to_tiff(input_file, output):
+    output = mc.handle_mat_file(input_file, output)
+    print('Data converted to tif: {}'.format(output))
+
+
 @cli.command(name='concat-tiffs')
 @click.option('--input-dir', '-i', default=os.getcwd(), type=click.Path(resolve_path=True, exists=True))
 @click.option('--downsample', '-d', default=4, type=int)

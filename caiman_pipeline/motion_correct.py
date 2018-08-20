@@ -5,8 +5,9 @@ import caiman_pipeline.util as util
 import caiman.motion_correction as mc
 
 
-def handle_mat_file(matfile):
-    tifname = re.sub('mat$', 'tif', matfile)
+def handle_mat_file(matfile, tifname=None):
+    if not tifname:
+        tifname = re.sub('mat$', 'tif', matfile)
     with h5py.File(matfile, 'r') as f:
         tifffile.imsave(tifname, data=f['y'], bigtiff=True)
     return tifname
