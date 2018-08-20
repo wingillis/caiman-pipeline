@@ -9,7 +9,7 @@ def handle_mat_file(matfile, tifname=None):
     if not tifname:
         tifname = re.sub('mat$', 'tif', matfile)
     with h5py.File(matfile, 'r') as f:
-        tifffile.imsave(tifname, data=f['y'], bigtiff=True)
+        tifffile.imsave(tifname, data=f['Y'], bigtiff=True)
     return tifname
 
 
