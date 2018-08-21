@@ -71,11 +71,12 @@ def extract_pipeline(input_file, cnmf_options, out_file, n_procs):
         cnmf_options = yaml.load(f, yaml.Loader)
     dview = util.create_dview(n_procs=n_procs)
     ca_traces, masks, cnmf = extract.extract(input_file, cnmf_options, dview=dview)
-    with h5py.File(os.path.join(dir, out_file), 'w') as f:
+    out_file = os.path.join(dir, out_file)
+    with h5py.File(out_file, 'w') as f:
         f.create_dataset('ca', data=ca_traces, compression='lzf')
         f.create_dataset('masks', data=masks, compression='lzf')
     del cnmf.dview
-    with open('cnmf.dill', 'wb') as f:
+    with open(os.path.splitext(out_file)[0] + '-cnmf.dill', 'wb') as f:
         dill.dump(cnmf, f)
     print('There are {} neurons, baby!'.format(ca_traces.shape[0]))
     cm.stop_server(dview=dview)
@@ -98,7 +99,7 @@ def motion_correct(input_file, gsig, max_shifts, rigid_splits, save_movie, nproc
                      save_movie=save_movie)
     dview = util.create_dview(n_procs=nprocs)
     corrected = mc.motion_correct(tif, mc_params, dview)
-    mmapped = util.memmap_file(corrected.fname_tot_rig, dview=dview, basename=re.sub('\.tif$', '', tif))
+    mmapped = util.memmap_file(corrected.fname_tot_rig, dview=dview, basename=re.sub(r'\.tif$', '', tif))
     # remove unnecessary intermediate
     os.remove(corrected.fname_tot_rig)
 
@@ -106,5 +107,5 @@ def motion_correct(input_file, gsig, max_shifts, rigid_splits, save_movie, nproc
     Y = Yr.T.reshape((T,) + dims, order='F')
     cn_filt, pnr = cm.summary_images.correlation_pnr(Y[:3000, max_shifts:-max_shifts, max_shifts:-max_shifts], gSig=gsig, swap_dim=False)
     cm.utils.visualization.inspect_correlation_pnr(cn_filt, pnr)
-    plt.savefig('caiman-corr.png')
+    plt.savefig(re.sub(r'\.tif$', '', tif) + '-caiman-corr.png')
     cm.stop_server(dview=dview)
