@@ -101,7 +101,10 @@ def motion_correct(input_file, gsig, max_shifts, rigid_splits, save_movie, nproc
     corrected = mc.motion_correct(tif, mc_params, dview)
     mmapped = util.memmap_file(corrected.fname_tot_rig, dview=dview, basename=re.sub(r'\.tif$', '', tif))
     # remove unnecessary intermediate
-    os.remove(corrected.fname_tot_rig)
+    if isinstance(corrected.fname_tot_rig, (list, tuple)):
+        os.remove(corrected.fname_tot_rig[0])
+    else:
+        os.remove(corrected.fname_tot_rig)
 
     Yr, dims, T = cm.load_memmap(mmapped)
     Y = Yr.T.reshape((T,) + dims, order='F')
