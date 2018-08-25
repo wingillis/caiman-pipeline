@@ -10,10 +10,10 @@
 # I made a caiman python environment activated in this way
 source activate caiman
 
-input_file = "$1"
-cnmf_options = "$2"
+input_file="$1"
+cnmf_options="$2"
 
-if [[ $# -eq 4 ]]; then
+if [[ $# -eq 3 ]]; then
 	caiman-pipe extract ${input_file} ${cnmf_options} --n-procs 8 --out-file "$3"
 else
 	caiman-pipe extract ${input_file} ${cnmf_options} --n-procs 8
