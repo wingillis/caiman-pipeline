@@ -93,7 +93,7 @@ def motion_correct(input_file, gsig, max_shifts, rigid_splits, save_movie, nproc
     import matplotlib.pyplot as plt
     if input_file.endswith('mat'):
         tif = mc.handle_mat_file(input_file)
-    elif input_file.endswith('tif'):
+    elif input_file.endswith('tif') or input_file.endswith('tiff'):
         tif = input_file
     mc_params = dict(gSig_filt=[gsig]*2, max_shifts=[max_shifts]*2, splits_rig=rigid_splits,
                      save_movie=save_movie)
