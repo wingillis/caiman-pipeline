@@ -10,4 +10,4 @@
 source activate caiman
 
 echo $1
-caiman-pipe mc "$1" --rigid-splits 100
+caiman-pipe mc "$1" --rigid-splits 200
