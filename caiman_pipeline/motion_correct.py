@@ -9,7 +9,9 @@ def handle_mat_file(matfile, tifname=None):
     if not tifname:
         tifname = re.sub('mat$', 'tif', matfile)
     with h5py.File(matfile, 'r') as f:
-        tifffile.imsave(tifname, data=f['Y'], bigtiff=True)
+        with tifffile.TiffWriter(tifname, bigtiff=True) as out_file:
+            for start, end in util.generate_indices(1000, f['Y'].shape[0]):
+                out_file.save(data=f['Y'][start:end])
     return tifname
 
 
