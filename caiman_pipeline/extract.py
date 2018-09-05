@@ -13,18 +13,18 @@ def extract(mmap_file, cnmf_opts, nprocs=8, dview=None):
         gSig=[cnmf_opts['gsig']] * 2,
         merge_thresh=cnmf_opts['merge-thresh'],
         Ain=None,
-        k=cnmf_opts['neurons-per-patch'],
+        k=None,
         tsub=cnmf_opts['t-sub'],
         ssub=cnmf_opts['s-sub'],
         rf=[cnmf_opts['half-patch-size']]*2,
         p=1,
         dview=dview,
-        stride=[cnmf_opts['patch-overlap']]*2,
+        stride=[cnmf_opts['patch-overlap']],
         only_init_patch=True,
         method_deconvolution='oasis',
-        nb_patch=0,
+        nb_patch=-1,
         gnb=cnmf_opts['background-components'],
-        low_rank_background=True,
+        low_rank_background=None,
         update_background_components=True,
         min_corr=cnmf_opts['min-corr'],
         min_pnr=cnmf_opts['min-pnr'],
@@ -32,15 +32,16 @@ def extract(mmap_file, cnmf_opts, nprocs=8, dview=None):
         center_psf=True,
         ring_size_factor=cnmf_opts['ring-size-factor'],
         del_duplicates=True,
-        ssub_B=2
+        ssub_B=2,
+        border_pix=cnmf_opts['border-px']
     )
     cnmf.fit(y)
+    estimates = cnmf.estimates
 
     # TODO: remove hard-coded r values and std reject
     good_idx, bad_idx, _, _, _ = evaluate.estimate_components_quality_auto(
-        Y=y, A=cnmf.A, C=cnmf.C, b=cnmf.b, f=cnmf.f, YrA=cnmf.YrA, frate=cnmf_opts['fps'],
+        Y=y, A=estimates.A, C=estimates.C, b=estimates.b, f=estimates.f, YrA=estimates.YrA, frate=cnmf_opts['fps'],
         decay_time=cnmf_opts['decay-time'], gSig=cnmf_opts['gsig'], dims=dims,
-        dview=dview, min_SNR=cnmf_opts['min-snr'], r_values_min=0.85, use_cnn=False
-    )
+        dview=dview, min_SNR=cnmf_opts['min-snr'], use_cnn=False)
 
-    return cnmf.C[good_idx], cnmf.A.toarray()[:, good_idx], cnmf
+    return estimates.C[good_idx], estimates.A.toarray()[:, good_idx], cnmf
