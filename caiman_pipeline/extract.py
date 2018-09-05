@@ -16,7 +16,7 @@ def extract(mmap_file, cnmf_opts, nprocs=8, dview=None):
         k=None,
         tsub=cnmf_opts['t-sub'],
         ssub=cnmf_opts['s-sub'],
-        rf=[cnmf_opts['half-patch-size']]*2,
+        rf=[cnmf_opts['half-patch-size']],
         p=1,
         dview=dview,
         stride=[cnmf_opts['patch-overlap']],
