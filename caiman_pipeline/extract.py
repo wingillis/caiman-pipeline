@@ -42,6 +42,6 @@ def extract(mmap_file, cnmf_opts, nprocs=8, dview=None):
     good_idx, bad_idx, _, _, _ = evaluate.estimate_components_quality_auto(
         Y=y, A=estimates.A, C=estimates.C, b=estimates.b, f=estimates.f, YrA=estimates.YrA, frate=cnmf_opts['fps'],
         decay_time=cnmf_opts['decay-time'], gSig=cnmf_opts['gsig'], dims=dims,
-        dview=dview, min_SNR=cnmf_opts['min-snr'], use_cnn=False)
+        dview=None, min_SNR=cnmf_opts['min-snr'], use_cnn=False)
 
     return estimates.C[good_idx], estimates.A.toarray()[:, good_idx], cnmf
