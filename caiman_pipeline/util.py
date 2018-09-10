@@ -1,6 +1,7 @@
 import os
 import caiman as cm
 import numpy as np
+from glob import glob
 
 
 def generate_indices(batch_size, max_frames):
@@ -22,6 +23,12 @@ def memmap_file(filename, basename='memmap_', dview=None):
 def plot_neurons(calcium, masks, folder):
     if not os.path.exists(folder):
         os.makedirs(folder)
+    else:
+        # remove neurons from previous extractions
+        neurons = glob(os.path.join(folder, '*.png'))
+        for neuron in neurons:
+            os.remove(neurons)
+
     import matplotlib
     matplotlib.use('agg')
     import matplotlib.pyplot as plt
