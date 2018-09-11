@@ -77,6 +77,8 @@ def extract_pipeline(input_file, cnmf_options, out_file, n_procs):
         f.create_dataset('masks', data=masks, compression='lzf')
     util.plot_neurons(ca_traces, masks, os.path.join(os.path.dirname(input_file), 'caiman-neurons'))
     del cnmf.dview
+    with open(os.path.splitext(out_file)[0] + '-estimates.dill', 'wb') as f:
+        dill.dump(cnmf.estimates, f)
     with open(os.path.splitext(out_file)[0] + '-cnmf.dill', 'wb') as f:
         dill.dump(cnmf, f)
     print('There are {} neurons, baby!'.format(ca_traces.shape[0]))
