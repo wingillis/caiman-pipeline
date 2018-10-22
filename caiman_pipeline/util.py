@@ -27,7 +27,7 @@ def plot_neurons(calcium, masks, folder):
         # remove neurons from previous extractions
         neurons = glob(os.path.join(folder, '*.png'))
         for neuron in neurons:
-            os.remove(neurons)
+            os.remove(neuron)
 
     import matplotlib
     matplotlib.use('agg')
