@@ -3,7 +3,7 @@
 #SBATCH -n 1
 #SBATCH --mem=90G
 #SBATCH -p short
-#SBATCH -t 1:15:00
+#SBATCH -t 3:15:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=wgillis@g.harvard.edu
 
