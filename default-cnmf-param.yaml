@@ -14,3 +14,4 @@ ring-size-factor: 1.4
 fps: 30
 decay-time: 0.4 # seconds - depends on calcium indicator
 min-snr: 3
+border-px: 10 # change depending on how much motion needed to be corrected for
