@@ -34,12 +34,12 @@ def plot_neurons(calcium, masks, folder):
     import matplotlib.pyplot as plt
     for i in range(calcium.shape[0]):
         plt.subplot(2, 1, 1)
-        plt.imshow(masks[:, i].reshape(270, 360))
+        plt.imshow(masks[:, i].reshape(360, 270))
         plt.subplot(2, 1, 2)
         plt.plot(calcium[i])
         plt.savefig(os.path.join(folder, 'neuron-{}.png'.format(i)))
         plt.close()
     all_masks = np.sum(masks, axis=1)
-    plt.imshow(all_masks.reshape(270, 360))
+    plt.imshow(all_masks.reshape(360, 270))
     plt.savefig(os.path.join(folder, 'all-masks.png'))
     plt.close()
