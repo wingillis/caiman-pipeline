@@ -26,6 +26,21 @@ def mat_to_tiff(input_file, output):
     output = mc.handle_mat_file(input_file, output)
     print('Data converted to tif: {}'.format(output))
 
+@cli.command(name='downsample-isxd')
+@click.argument('input-file', type=click.Path(exists=True, resolve_path=True))
+@click.option('--downsample', '-d', default=4, type=float)
+def downsample_isxd(input_file, downsample):
+    fname = input_file[:-5] + '-dnsmpl-{}x-concat.tif'.format(downsample)
+    import sys
+    sys.path.append('/home/wg41/code/Inscopix Data Processing.linux/Contents/API/Python')
+    import isx
+    movie = isx.Movie.read(input_file)
+    with tifffile.TiffWriter(fname, bigtiff=True) as tif:
+        for i in tqdm(range(movie.timing.num_samples), desc='Downsampling',
+                      total=movie.timing.num_samples):
+            resized = cv2.resize(movie.get_frame_data(), None, fx=1 / downsample,
+                                 fy=1 / downsample, interpolation=cv2.INTER_AREA)
+            tif.save(resized)
 
 @cli.command(name='concat-tiffs')
 @click.option('--input-dir', '-i', default=os.getcwd(), type=click.Path(resolve_path=True, exists=True))
