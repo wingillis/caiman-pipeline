@@ -38,7 +38,7 @@ def downsample_isxd(input_file, downsample):
     with tifffile.TiffWriter(fname, bigtiff=True) as tif:
         for i in tqdm(range(movie.timing.num_samples), desc='Downsampling',
                       total=movie.timing.num_samples):
-            resized = cv2.resize(movie.get_frame_data(), None, fx=1 / downsample,
+            resized = cv2.resize(movie.get_frame_data(i), None, fx=1 / downsample,
                                  fy=1 / downsample, interpolation=cv2.INTER_AREA)
             tif.save(resized)
 
