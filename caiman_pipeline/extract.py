@@ -43,4 +43,4 @@ def extract(mmap_file, cnmf_opts, nprocs=8, dview=None):
         decay_time=cnmf_opts['decay-time'], gSig=cnmf_opts['gsig'], dims=dims,
         dview=None, min_SNR=cnmf_opts['min-snr'], use_cnn=False)
 
-    return estimates.C[good_idx], estimates.A.toarray()[:, good_idx], cnmf
+    return estimates.C[good_idx], estimates.A.toarray()[:, good_idx], cnmf, dims

@@ -20,7 +20,7 @@ def memmap_file(filename, basename='memmap_', dview=None):
     return cm.save_memmap([filename], base_name=basename, dview=dview, order='C')
 
 
-def plot_neurons(calcium, masks, folder):
+def plot_neurons(calcium, masks, folder, dims):
     if not os.path.exists(folder):
         os.makedirs(folder)
     else:
@@ -40,6 +40,6 @@ def plot_neurons(calcium, masks, folder):
         plt.savefig(os.path.join(folder, 'neuron-{}.png'.format(i)))
         plt.close()
     all_masks = np.sum(masks, axis=1)
-    plt.imshow(all_masks.reshape(270, 360))
+    plt.imshow(all_masks.reshape(*dims))
     plt.savefig(os.path.join(folder, 'all-masks.png'))
     plt.close()
