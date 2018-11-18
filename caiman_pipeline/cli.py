@@ -91,11 +91,11 @@ def extract_pipeline(input_file, cnmf_options, out_file, n_procs):
     with open(cnmf_options, 'r') as f:
         cnmf_options = yaml.load(f, yaml.Loader)
     dview = util.create_dview(n_procs=n_procs)
-    ca_traces, masks, cnmf = extract.extract(input_file, cnmf_options, dview=dview)
+    ca_traces, masks, cnmf, dims = extract.extract(input_file, cnmf_options, dview=dview)
     with h5py.File(out_file, 'w') as f:
         f.create_dataset('ca', data=ca_traces, compression='lzf')
         f.create_dataset('masks', data=masks, compression='lzf')
-    util.plot_neurons(ca_traces, masks, os.path.join(dir, 'caiman-neurons'))
+    util.plot_neurons(ca_traces, masks, os.path.join(dir, 'caiman-neurons'), dims)
     del cnmf.dview
     with open(os.path.splitext(out_file)[0] + '-estimates.dill', 'wb') as f:
         dill.dump(cnmf.estimates, f)
