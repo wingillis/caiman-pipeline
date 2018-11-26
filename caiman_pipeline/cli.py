@@ -26,6 +26,7 @@ def mat_to_tiff(input_file, output):
     output = mc.handle_mat_file(input_file, output)
     print('Data converted to tif: {}'.format(output))
 
+
 @cli.command(name='downsample-isxd')
 @click.argument('input-file', type=click.Path(exists=True, resolve_path=True))
 @click.option('--downsample', '-d', default=4, type=float)
@@ -41,6 +42,7 @@ def downsample_isxd(input_file, downsample):
             resized = cv2.resize(movie.get_frame_data(i), None, fx=1 / downsample,
                                  fy=1 / downsample, interpolation=cv2.INTER_AREA)
             tif.save(resized)
+
 
 @cli.command(name='concat-tiffs')
 @click.option('--input-dir', '-i', default=os.getcwd(), type=click.Path(resolve_path=True, exists=True))
@@ -101,6 +103,8 @@ def extract_pipeline(input_file, cnmf_options, out_file, n_procs):
         dill.dump(cnmf.estimates, f)
     with open(os.path.splitext(out_file)[0] + '-cnmf.dill', 'wb') as f:
         dill.dump(cnmf, f)
+    cnmf.save(os.path.splitext(out_file)[0] + '-cnmf.h5')
+
     print('There are {} neurons, baby!'.format(ca_traces.shape[0]))
     cm.stop_server(dview=dview)
 
