@@ -103,7 +103,7 @@ def extract_pipeline(input_file, cnmf_options, out_file, n_procs):
         dill.dump(cnmf.estimates, f)
     with open(os.path.splitext(out_file)[0] + '-cnmf.dill', 'wb') as f:
         dill.dump(cnmf, f)
-    cnmf.save(os.path.splitext(out_file)[0] + '-cnmf.h5')
+    # cnmf.save(os.path.splitext(out_file)[0] + '-cnmf.h5')
 
     print('There are {} neurons, baby!'.format(ca_traces.shape[0]))
     cm.stop_server(dview=dview)
