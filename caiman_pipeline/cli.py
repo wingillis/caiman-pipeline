@@ -12,6 +12,7 @@ import caiman_pipeline.extract as extract
 import caiman as cm
 from glob import glob
 from tqdm import tqdm
+from os.path import join
 
 
 @click.group()
@@ -51,7 +52,7 @@ def concat_tiffs(input_dir, downsample):
     # TODO: add a failsafe so multiple recordings in the same dir don't get concatenated
     regex_pat = r'-[0-9]{3}\.tif$'
     # get tif files
-    files = glob(os.path.join(input_dir, '*.tif'))
+    files = glob(join(input_dir, '*.tif'))
     # remove any files with 'concat' in the name - it means it's already concatenated
     files = [f for f in files if 'concat' not in os.path.basename(f)]
     processed = []
@@ -78,10 +79,10 @@ def concat_tiffs(input_dir, downsample):
 
 @cli.command(name='extract')
 @click.argument('input_file', type=click.Path(exists=True, resolve_path=True))
-@click.argument('cnmf_options')
+@click.option('--params', '-p', default=None, type=click.Path(exists=True, resolve_path=True))
 @click.option('--out-file', '-o', default=None, type=str)
 @click.option('--n-procs', default=9, type=int)
-def extract_pipeline(input_file, cnmf_options, out_file, n_procs):
+def extract_pipeline(input_file, params, out_file, n_procs):
     assert input_file.endswith('mmap'), 'Input file needs to be a memmap file!'
     dir = os.path.dirname(input_file)
     if out_file is None:
@@ -90,14 +91,17 @@ def extract_pipeline(input_file, cnmf_options, out_file, n_procs):
             out_file = input_file[:search.start()] + '-extract.h5'
         else:
             out_file = os.path.splitext(input_file)[0] + '-extract.h5'
-    with open(cnmf_options, 'r') as f:
+    if params is None:
+        params = glob(join(os.path.dirname(input_file), '*caiman*yaml'))[0]
+        # TODO: if no params are found use default params
+    with open(params, 'r') as f:
         cnmf_options = yaml.load(f, yaml.Loader)
     dview = util.create_dview(n_procs=n_procs)
     ca_traces, masks, cnmf, dims = extract.extract(input_file, cnmf_options, dview=dview)
     with h5py.File(out_file, 'w') as f:
         f.create_dataset('ca', data=ca_traces, compression='lzf')
         f.create_dataset('masks', data=masks, compression='lzf')
-    util.plot_neurons(ca_traces, masks, os.path.join(dir, 'caiman-neurons'), dims)
+    util.plot_neurons(ca_traces, masks, join(dir, 'caiman-neurons'), dims)
     del cnmf.dview
     with open(os.path.splitext(out_file)[0] + '-estimates.dill', 'wb') as f:
         dill.dump(cnmf.estimates, f)
